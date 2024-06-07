@@ -6,8 +6,8 @@
  */
 
 // Initialize variables
-var bg1 ={x:-1, y: 0, w:323, h:450, s:2, img:"bg1"};
-var bg2 ={x:-319, y: 0, w:323, h:450, s:2, img:"bg2"};
+var bg1 ={x:0, y: 0, w:323, h:450, s:2, img:"bg1"};
+var bg2 ={x:320, y: 0, w:323, h:450, s:2, img:"bg2"};
 var asteroid1 ={x:randomNumber(0,319), y:-20, w:50, h:50, s:2, img:"asteroid1"};
 var asteroid2 ={x:randomNumber(0,319), y:-20, w:50, h:50, s:2, img:"asteroid2"};
 var asteroid3 ={x:randomNumber(0,319), y:-10, w:50, h:50, s:2, img:"asteroid3"};
