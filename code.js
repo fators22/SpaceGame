@@ -4,152 +4,146 @@
  * 
  * Lab Description: Detect Collision
  */
+
 // Initialize variables
-var bg1={x:0, y:0, w:320, h:450, s:2, img:"bg1"};
-var bg2={x:-320, y:0, w:320, h:450, s:2, img:"bg2"};
-//asteroids
-var a1 =  {x:0, y: -70, h: 50, w: 50, s: 4, img: "a1"};
-var a2 = {x:100, y: -70, h: 50, w: 50, s: 7, img: "a2"};
-var a3 = {x:250, y: -70, h: 50, w: 50, s: 9, img: "a3"};
-var a4 = {x:250, y: -70, h: 50, w: 50, s: 9, img: "a4"};
-var a5 = {x:250, y: -70, h: 50, w: 50, s: 9, img: "a5"};
-
-var e1 = {x:50, y: -70, h: 50, w: 50, s:4, img: "e1"};
-var e2 = {x:150, y: -70, h: 30, w: 30, s:7, img: "e2"};
-var e3 = {x:270, y: -70, h: 30, w: 30, s:9, img: "e3"};
-var e4 = {x:300, y: -70, h: 30, w: 30, s:9, img: "e4"};
-var e5 = {x:100, y: -70, h: 30, w: 30, s: 9, img: "e5"};
-
-var spaceObjects=[a1, a2, a3, a4, a5 ];
-var meteors=[e1, e2, e3, e4, e5 ];
-//rocket
-var r= {x:100, y:270, w:50, h:100, s:5, img:"rocket"};
-var score = 0, maxScore=30;
-
-
-//Moving background
+var bg1 ={x:-1, y: 0, w:323, h:450, s:2, img:"bg1"};
+var bg2 ={x:-319, y: 0, w:323, h:450, s:2, img:"bg2"};
+var asteroid1 ={x:randomNumber(0,319), y:-20, w:50, h:50, s:2, img:"asteroid1"};
+var asteroid2 ={x:randomNumber(0,319), y:-20, w:50, h:50, s:2, img:"asteroid2"};
+var asteroid3 ={x:randomNumber(0,319), y:-10, w:50, h:50, s:2, img:"asteroid3"};
+var asteroids = [asteroid1, asteroid2];
+var enemies = [asteroid3];
+var rocket ={x:150, y:230, w:50, h:100,s:7, img:"rocket"};
+var score = 0;
+// Functions to set up game
 drawBackground();
-drawElements();
+makeAsteroid();
+makeRocket();
+drawScore();
 
 
-//list ii
-timedLoop(100, function() {
-   scrollBg();
-  moveObjects(spaceObjects, "good");
-  moveObjects(meteors, "bad");
+onEvent("screen1", "keydown", function (event) {
+  if (event.key=="Left"){
+    rocket.x -= rocket.s; // Move the rocket left
+  }
+  if (event.key=="Right"){
+    rocket.x +=rocket.s; // Move the rocket right
+  }
+  if (event.key=="Up"){
+    rocket.y -= rocket.s; // Move the rocket up
+  }
+  if (event.key==="Down"){
+    rocket.y += rocket.s; // Move the rocket down
+  }
 
+setPosition(rocket.img,rocket.x,rocket.y,rocket.w,rocket.h);
 });
-function moveObjects(list, isGood) {
-  var points=-3;
-  if(isGood=="good"){
-    points=2;
+
+
+timedLoop(50, function (){
+  scrollBg();
+  moveAsteroid(asteroid1);
+  moveAsteroid(asteroid2);
+  moveAsteroid(asteroid3);
+  handleCollision(rocket, asteroids, false);
+    handleCollision(rocket, enemies, true);
+  checkOverlap(asteroid1);
+  checkOverlap(asteroid2);
+  checkOverlap(asteroid3);
+});
+function handleCollision(item, objects, attack){
+  var points=2
+  if(attack==true ){
+    points=-3;
     
   }
-  for(var i=0; i<list.length; i++){
-      var ast=list[i]; 
-      ast.y = ast.y + ast.s;
-    
-      setPosition(ast.img, ast.x, ast.y, ast.w, ast.h);
-      if(ast.y>=450){
-        ast.y= -50;
-        ast.x= randomNumber(0,320);
-      }
-      checkCollision (r, ast, points);
-        
+  for (var i = 0; i<objects.length; i++){
+    if (checkCollision(item,objects[i])){
+       objects[i].y = -90;
+  objects[i].x = randomNumber(15,290);
+  objects[i].s = randomNumber(3,6);
+  setPosition(objects[i].img, objects[i].x, objects[i].y);
+  score=score+=points;
+  setText("score", "Score: "+score);
+  if (score>= 20){
+    stopTimedLoop();
   }
- 
-}
-
-
-
-function drawBackground (){
- setImageURL(bg1.img, "assets/6062b.png");
- setImageURL(bg2.img, "assets/6062a.png");
- setProperty(bg1.img, "fit", "cover");
- setProperty(bg2.img, "fit", "cover");
- setStyle(bg1.img, "z-index", "0");
- setStyle(bg2.img, "z-index", "0");
-}
-//Assinging asteroids to the screen
-function drawElements(){
- for(var i=0; i<spaceObjects.length; i++){
-    setImageURL(spaceObjects[i].img, "assets/rock.png");
-    setPosition(spaceObjects[i].img, spaceObjects[i].x, spaceObjects[i].y, spaceObjects[i].w, spaceObjects[i].h);
- }
-  for(var j=0; j<meteors.length; j++){
-    setImageURL(meteors[j].img,  "assets/meteor.png");
-        setPosition(meteors[j].img, meteors[j].x, meteors[j].y);
- }
- 
-   setImageURL(r.img, "assets/rocket.gif");
-   setPosition(r.img, r.x, r.y, r.w, r.h);
-
-  textLabel("score", "Score: "+score);
+    
+    
+  }
+  }
   
-    
+}
+function drawBackground(){
+  image(bg1.img, "6062b.png");
+  image(bg2.img, "6062a.png");
+ 
+  setProperty(bg1.img, "fit", "cover");
+  setProperty(bg2.img, "fit", "cover");
+  
+}
+function drawScore (){
+  textLabel ("score", "Score: ");
+  setPosition ("score", 190, 25, 105, 25);
+  setProperty("score", "text-color", "blue");
+  setProperty("score", "border-color","blue");
+  setProperty("score", "border-width", 3);
+  setProperty("score", "border-radius", 3);
 }
 function scrollBg(){
-  bg1.x=bg1.x+bg1.s;
-  bg2.x=bg2.x+bg2.s;
+  bg1.x+=bg1.s;
+  bg2.x+=bg2.s;
   setPosition(bg1.img, bg1.x, bg1.y, bg1.w, bg1.h);
   setPosition(bg2.img, bg2.x, bg2.y, bg2.w, bg2.h);
-  if(bg1.x>=bg1.w){
-   bg1.x=-bg1.w; 
+  // find the wrap around the screen
+   if (bg1.x>320){
+    bg1.x=-319;
   }
-  
-  if(bg2.x>=bg2.w){
-   bg2.x=-bg2.w; 
-  }
-}
-
-
-
-
-
-//Moving the rocket
-onEvent("screen1", "keydown", function(event) {
-  if (event.key === "Left") {
-    r.x = r.x - 10; // Move the rocket left
-  }
-  if (event.key === "Right") {
-    r.x = r.x + 10; // Move the rocket right
-    }
-  if (event.key === "Down") {
-    r.y = r.y + 10; // Move the rocket down
-    }
-  if (event.key === "Up") {
-    r.y = r.y - 10; // Move the rocket up
-    }
-   setPosition(r.img, r.x, r.y, 50, 100);
-});
-
-//Moving asteroids
-
-
-
-function startOver(obj1){
-  obj1.x = randomNumber(10,300);
-  obj1.y = randomNumber(-50,-20);
-  obj1.s = randomNumber(3,8);
-  setPosition(obj1.img, obj1.x, obj1.y, obj1.w, obj1.h);
-  setText("score", "Score: "+score);
-}
-function checkCollision (obj1, obj2, point){
-  //console.log (typeof(obj1)!=typeof(obj2));
-  
-  var xOv= Math.max(0, (Math.min(obj1.x+obj1.w-10, obj2.x+obj2.w-10)-Math.max(obj1.x+10, obj2.x+10))+1);
-  var yOv= Math.max(0, (Math.min(obj1.y+obj1.h, obj2.y+obj2.h)-Math.max(obj1.y, obj2.y))+1);
-  
-  if (xOv>0 && yOv>0){
-   //collision resolution
-    score=score+point;
-    setText("score", "Score: "+score);
-    if(score>= maxScore){
-      stopTimedLoop();
-    }
-    startOver(obj2);
-      
+  if (bg2.x>320){
+  bg2.x=-319;
   }
 }
-  
 
+function makeAsteroid(){
+    image(asteroid1.img, "meteor.png");
+    setProperty(asteroid1.img, "fit", "fill");
+    setPosition(asteroid1.img, asteroid1.x, asteroid1.y, asteroid1.w, asteroid1.h);
+    // draw asteroid2
+    image(asteroid2.img, "meteor2.png");
+    setProperty(asteroid2.img, "fit", "fill");
+    setPosition(asteroid2.img, asteroid2.x, asteroid2.y, asteroid2.w, asteroid2.h);
+    //draw asteroid3
+    image(asteroid3.img, "rock.png");
+    setProperty(asteroid1.img, "fit", "fill");
+    setPosition(asteroid3.img, asteroid3.x, asteroid3.y, asteroid3.w, asteroid3.h);
+    
+}
+function moveAsteroid (asteroid){
+  asteroid.y += asteroid.s;
+  setPosition(asteroid.img,asteroid.x,asteroid.y);
+}
+
+function makeRocket (){
+    image(rocket.img, "rocket.gif");
+    setPosition(rocket.img, rocket.x, rocket.y, rocket.w, rocket.h);
+}
+
+function checkCollision (obj1, obj2){
+// console.log (typeof(obj1)!=typeof(obj2));
+var xOv= Math.max(0,Math.min(obj1.x+obj1.w, obj2.x+obj2.w)-Math.max(obj1.x,obj2.x)+1);
+var yOv= Math.max(0,Math.min(obj1.y+obj1.h, obj2.y+obj2.h)-Math.max(obj1.y,obj1.y)+1);
+return xOv>0 && yOv>0 ;
+ 
+
+}
+function checkOverlap (asteroid) {
+  if (asteroid.y >= 450) {
+    asteroid.y = -100;
+    asteroid.x = randomNumber(20,300);
+    asteroid.s = randomNumber(4,6);
+    setPosition(asteroid.img, asteroid.x, asteroid.y);
+    score=score-=1;
+   setText("score", "Score: "+score)
+    
+  }
+}
