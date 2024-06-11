@@ -3,24 +3,28 @@ html {
   width: 100%;
 } 
 img {
-	height: 100%;
-        width: 100%;
+	height: 320px;
+	width: 450px;
 }
 .background {
-	position: absolute;
-	height: 100%;
-  width: 100%;
-  z-index: index;
-  top:0px;
-  left:0px;
-}
+		position: absolute;
+	  top: 0px;
+	  left: 0px;
+		height: 100%;
+		width: 100%;
+	z-index: 1;
+} 
 #time {
-	z-index: index 20;
-  color:white;
-  top:10px;
-  left:10px;
-	
+		color: white;
+		position: absolute;
+		top: 10px;
+		left: 10px;
+	z-index: 2;
 }
+/* .objects {
+	position: absolute;
+	z-index: 4;
+}  */
 
 
 
