@@ -10,12 +10,12 @@ img {
 	position: absolute;
 	height: 100%;
   width: 100%;
-  z-index:1;
+  z-index: index;
   top:0px;
   left:0px;
 }
 #time {
-	z-index:2;
+	z-index: index 20;
   color:white;
   top:10px;
   left:10px;
