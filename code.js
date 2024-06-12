@@ -30,7 +30,8 @@ function scrollBg(){
   }
 }
 
-function setPosition(element, x, y, w, h){
+function setPosition(el, x, y, w, h){
+	var element= document.getElementById(el);
          element.style.position = 'absolute';
 					element.style.left = x + 'px';
 					element.style.top = y + 'px';
